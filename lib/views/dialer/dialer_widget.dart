@@ -39,10 +39,18 @@ class _DialerWidgetState extends State<DialerWidget> {
       child: Container(
         width: MediaQuery.of(context).size.width < 600 &&
                 widget.orientation == Orientation.portrait
-            ? widget.orientation == Orientation.portrait
-                ? MediaQuery.of(context).size.width * 0.6
-                : MediaQuery.of(context).size.width * 0.3
-            : MediaQuery.of(context).size.width * 0.4,
+            ? MediaQuery.of(context).size.width * 0.65 //mobile portrait
+            : widget.orientation == Orientation.landscape
+                ? MediaQuery.of(context).size.height *
+                    0.57 //mobile landscape mode
+                : widget.orientation == Orientation.portrait &&
+                        MediaQuery.of(context).size.width > 600
+                    ? MediaQuery.of(context).size.width *
+                        0.57 // tablet portrait
+                    : widget.orientation == Orientation.landscape
+                        ? MediaQuery.of(context).size.height *
+                            0.55 //tablet landscape
+                        : MediaQuery.of(context).size.height * 0.4,
         height: widget.orientation == Orientation.landscape
             ? MediaQuery.of(context).size.height * 0.78
             : MediaQuery.of(context).size.height * 0.5,

@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "D:/FIVERR/big_phone_new/big_phone_us_new/linux"
+    "cmake.sourceDirectory": "D:/FIVERR/big_phone_new/big_phone_us_new/linux",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

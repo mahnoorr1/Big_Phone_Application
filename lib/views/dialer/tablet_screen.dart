@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
+import '../contacts/contact_screen.dart';
 import 'dialer_widget.dart';
 
 class TabletScreen extends StatefulWidget {
@@ -24,9 +26,20 @@ class _TabletScreenState extends State<TabletScreen> {
     );
   }
 
-  void onListTap() {}
+  void onListTap() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ContactsScreen(),
+      ),
+    );
+  }
 
-  void onCallTap() {}
+  void onCallTap() async {
+    if (enteredNumber.isNotEmpty) {
+      await FlutterPhoneDirectCaller.callNumber(enteredNumber);
+    }
+  }
 
   void onBackspaceTap() {
     if (enteredNumber.isNotEmpty) {

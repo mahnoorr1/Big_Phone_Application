@@ -1,5 +1,5 @@
+import 'package:big_phone_us_new/stripe/stripe_payment.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -37,7 +37,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 height: 20,
               ),
               Container(
-                height: MediaQuery.of(context).size.height * 0.9,
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: Column(
                   children: [
@@ -156,7 +155,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               WidgetStateProperty.all<Color>(Colors.white),
                         ),
                         child: const Text("Abonnieren"),
-                        onPressed: () {},
+                        onPressed: () {
+                          // Payment().makePayment(context, price);
+                        },
                       ),
                     )
                   : const SizedBox(),

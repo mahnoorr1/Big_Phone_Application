@@ -16,7 +16,11 @@ class _ContactScreenState extends State<DialerScreen> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 30,
-        title: const Text('Kontakte'),
+        title: const Text(
+          'Telefon',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.grey,
       ),
       body: OrientationBuilder(builder: (context, orientation) {
         return LayoutBuilder(
