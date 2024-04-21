@@ -7,36 +7,19 @@ class DialerScreen extends StatefulWidget {
   const DialerScreen({Key? key}) : super(key: key);
 
   @override
-  State<DialerScreen> createState() => _ContactScreenState();
+  State<DialerScreen> createState() => _DialerScreenState();
 }
 
-class _ContactScreenState extends State<DialerScreen> {
+class _DialerScreenState extends State<DialerScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 30,
-        title: const Text(
-          'Telefon',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.grey,
-      ),
-      body: OrientationBuilder(builder: (context, orientation) {
-        return LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            if (constraints.maxWidth < 600 &&
-                orientation == Orientation.portrait) {
-              return MobileScreen();
-            } else if (constraints.maxHeight < 600 &&
-                orientation == Orientation.landscape) {
-              return MobileScreen();
-            } else {
-              return const TabletScreen();
-            }
-          },
-        );
-      }),
-    );
+    return Builder(builder: (BuildContext context) {
+      if (MediaQuery.of(context).size.width < 600 ||
+          MediaQuery.of(context).size.height < 600) {
+        return MobileScreen();
+      } else {
+        return const TabletScreen();
+      }
+    });
   }
 }

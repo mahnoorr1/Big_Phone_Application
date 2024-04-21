@@ -15,14 +15,25 @@ class _TabletScreenState extends State<TabletScreen> {
   String enteredNumber = '';
   @override
   Widget build(BuildContext context) {
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        if (orientation == Orientation.portrait) {
-          return _buildPortraitLayout(orientation, context);
-        } else {
-          return _buildLandscapeLayout(orientation);
-        }
-      },
+    return Scaffold(
+      extendBody: true,
+      appBar: AppBar(
+        toolbarHeight: 30,
+        title: const Text(
+          'Telefon',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.grey,
+      ),
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          if (orientation == Orientation.portrait) {
+            return _buildPortraitLayout(orientation);
+          } else {
+            return _buildLandscapeLayout(orientation);
+          }
+        },
+      ),
     );
   }
 
@@ -55,10 +66,10 @@ class _TabletScreenState extends State<TabletScreen> {
     });
   }
 
-  Widget _buildPortraitLayout(Orientation orientation, BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        double maxWidth = constraints.maxWidth * 0.85;
+  Widget _buildPortraitLayout(Orientation orientation) {
+    return Builder(
+      builder: (context) {
+        double maxWidth = MediaQuery.of(context).size.width * 0.85;
         double initialFontSize = maxWidth * 0.13;
         double fontSize = initialFontSize;
 
@@ -87,18 +98,23 @@ class _TabletScreenState extends State<TabletScreen> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              enteredNumber,
-              style: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.w600,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  enteredNumber,
+                  style: TextStyle(
+                    fontSize: initialFontSize,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
             const SizedBox(
               height: 2,
             ),
             DialerWidget(
-              orientation: orientation,
               enteredNumber: enteredNumber,
               onNumberButtonPressed: onNumberButtonPressed,
             ),
@@ -134,8 +150,8 @@ class _TabletScreenState extends State<TabletScreen> {
   }
 
   Widget _buildLandscapeLayout(Orientation orientation) {
-    return LayoutBuilder(builder: (context, constraints) {
-      double maxWidth = constraints.maxWidth * 0.5;
+    return Builder(builder: (context) {
+      double maxWidth = MediaQuery.of(context).size.width * 0.5;
       double initialFontSize = maxWidth * 0.145;
       double fontSize = initialFontSize;
 
@@ -213,7 +229,6 @@ class _TabletScreenState extends State<TabletScreen> {
               ],
             ),
             DialerWidget(
-              orientation: orientation,
               enteredNumber: enteredNumber,
               onNumberButtonPressed: onNumberButtonPressed,
             ),
