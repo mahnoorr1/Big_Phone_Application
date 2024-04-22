@@ -143,12 +143,10 @@ class _ContactsScreenState extends State<ContactsScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
-            'Dani\nAnrufen?',
+          title: Text(
+            '$contactName\nanrufen?',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
           ),
           actions: [
             Row(
@@ -174,7 +172,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 30,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -204,7 +202,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 30,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

@@ -38,21 +38,21 @@ class _DialerWidgetState extends State<DialerWidget> {
         child: Container(
           width: MediaQuery.of(context).size.width < 600 &&
                   orientation == Orientation.portrait
-              ? MediaQuery.of(context).size.width * 0.65 //mobile portrait
+              ? MediaQuery.of(context).size.width * 0.87 //mobile portrait
               : orientation == Orientation.landscape
                   ? MediaQuery.of(context).size.height *
-                      0.57 //mobile landscape mode
+                      0.65 //mobile landscape mode
                   : orientation == Orientation.portrait &&
                           MediaQuery.of(context).size.width > 600
                       ? MediaQuery.of(context).size.width *
-                          0.57 // tablet portrait
+                          0.6 // tablet portrait
                       : orientation == Orientation.landscape
                           ? MediaQuery.of(context).size.height *
-                              0.55 //tablet landscape
+                              0.6 //tablet landscape
                           : MediaQuery.of(context).size.height * 0.4,
           height: orientation == Orientation.landscape
-              ? MediaQuery.of(context).size.height * 0.78
-              : MediaQuery.of(context).size.height * 0.5,
+              ? MediaQuery.of(context).size.height * 0.9
+              : MediaQuery.of(context).size.height * 0.6,
           padding: const EdgeInsets.all(2),
           child: GridView.count(
             crossAxisCount: 3,
@@ -98,7 +98,7 @@ class _DialerWidgetState extends State<DialerWidget> {
                 text,
                 style: TextStyle(
                   fontSize: MediaQuery.of(context).size.width < 600
-                      ? MediaQuery.of(context).size.height * 0.05
+                      ? MediaQuery.of(context).size.height * 0.08
                       : MediaQuery.of(context).size.width * 0.05,
                   fontWeight: FontWeight.bold,
                 ),

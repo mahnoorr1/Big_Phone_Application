@@ -109,7 +109,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: Text(
                       price,
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 32,
                         fontWeight: FontWeight.w600,
                         color: price == 'Frei'
                             ? const Color.fromARGB(255, 21, 156, 26)
@@ -134,13 +134,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: const Icon(
                         Icons.check,
                         color: Color.fromARGB(255, 21, 156, 26),
-                        size: 20,
+                        size: 28,
                       ),
                     ),
                     const SizedBox(
                       width: 10,
                     ),
-                    Text(details),
+                    Text(
+                      details,
+                      style: const TextStyle(fontSize: 20),
+                    ),
                   ],
                 ),
               ),
@@ -154,7 +157,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           foregroundColor:
                               WidgetStateProperty.all<Color>(Colors.white),
                         ),
-                        child: const Text("Abonnieren"),
+                        child: const Text(
+                          "Abonnieren",
+                          style: TextStyle(fontSize: 28),
+                        ),
                         onPressed: () {
                           // Payment().makePayment(context, price);
                         },

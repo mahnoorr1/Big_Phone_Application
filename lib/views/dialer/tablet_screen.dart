@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 import '../contacts/contact_screen.dart';
+import '../settings/settings_screen.dart';
 import 'dialer_widget.dart';
 
 class TabletScreen extends StatefulWidget {
@@ -24,6 +25,22 @@ class _TabletScreenState extends State<TabletScreen> {
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.grey,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InkWell(
+              child: const Icon(Icons.settings),
+              onDoubleTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SettingsScreen(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       body: OrientationBuilder(
         builder: (context, orientation) {
@@ -73,40 +90,22 @@ class _TabletScreenState extends State<TabletScreen> {
         double initialFontSize = maxWidth * 0.13;
         double fontSize = initialFontSize;
 
-        TextPainter textPainter = TextPainter(
-          text: TextSpan(
-            text: enteredNumber,
-            style: TextStyle(
-              fontSize: fontSize,
-            ),
-          ),
-          textDirection: TextDirection.ltr,
-        );
-        textPainter.layout();
-
-        while (textPainter.size.width > maxWidth) {
-          fontSize -= 1.0;
-          textPainter.text = TextSpan(
-            text: enteredNumber,
-            style: TextStyle(
-              fontSize: fontSize,
-            ),
-          );
-          textPainter.layout();
-        }
-
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  enteredNumber,
-                  style: TextStyle(
-                    fontSize: initialFontSize,
-                    fontWeight: FontWeight.w500,
+              child: Container(
+                width: double.infinity,
+                height: 150,
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: Text(
+                    enteredNumber,
+                    style: TextStyle(
+                      fontSize: initialFontSize,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ),
@@ -118,6 +117,9 @@ class _TabletScreenState extends State<TabletScreen> {
               enteredNumber: enteredNumber,
               onNumberButtonPressed: onNumberButtonPressed,
             ),
+            const SizedBox(
+              height: 20,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -127,14 +129,14 @@ class _TabletScreenState extends State<TabletScreen> {
                   onTap: onListTap,
                   orientation: orientation,
                 ),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                 _buildActionButton(
                   icon: Icons.phone,
                   color: Colors.green,
                   onTap: onCallTap,
                   orientation: orientation,
                 ),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                 _buildActionButton(
                   icon: Icons.arrow_back,
                   color: Colors.blue,
@@ -200,21 +202,21 @@ class _TabletScreenState extends State<TabletScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                     _buildActionButton(
                       icon: Icons.list,
                       color: Colors.blue,
                       onTap: onListTap,
                       orientation: orientation,
                     ),
-                    SizedBox(width: MediaQuery.of(context).size.height * 0.05),
+                    SizedBox(width: MediaQuery.of(context).size.height * 0.02),
                     _buildActionButton(
                       icon: Icons.phone,
                       color: Colors.green,
                       onTap: onCallTap,
                       orientation: orientation,
                     ),
-                    SizedBox(width: MediaQuery.of(context).size.height * 0.05),
+                    SizedBox(width: MediaQuery.of(context).size.height * 0.02),
                     _buildActionButton(
                       icon: Icons.arrow_back,
                       color: Colors.blue,
@@ -245,11 +247,11 @@ class _TabletScreenState extends State<TabletScreen> {
       required Orientation orientation}) {
     return Container(
       width: orientation == Orientation.portrait
-          ? MediaQuery.of(context).size.width * 0.16
-          : MediaQuery.of(context).size.height * 0.16,
+          ? MediaQuery.of(context).size.width * 0.24
+          : MediaQuery.of(context).size.height * 0.26,
       height: orientation == Orientation.portrait
-          ? MediaQuery.of(context).size.width * 0.16
-          : MediaQuery.of(context).size.height * 0.16,
+          ? MediaQuery.of(context).size.width * 0.24
+          : MediaQuery.of(context).size.height * 0.26,
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         border: Border.all(
@@ -263,8 +265,8 @@ class _TabletScreenState extends State<TabletScreen> {
           icon,
           color: color,
           size: orientation == Orientation.portrait
-              ? MediaQuery.of(context).size.width * 0.1
-              : MediaQuery.of(context).size.height * 0.1,
+              ? MediaQuery.of(context).size.width * 0.2
+              : MediaQuery.of(context).size.height * 0.25,
         ),
       ),
     );
