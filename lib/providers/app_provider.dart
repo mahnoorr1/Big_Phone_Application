@@ -38,23 +38,23 @@ class FontStyleProvider extends ChangeNotifier {
 
   FontStyleProvider() {
     _style = 'regular';
-    _loadLayoutPercentage();
+    _loadFontStyle();
   }
 
-  Future<void> _loadLayoutPercentage() async {
+  Future<void> _loadFontStyle() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _style = prefs.getString(_prefsKey) ?? 'regular';
     notifyListeners();
   }
 
-  Future<void> _saveLayoutPercentage() async {
+  Future<void> _saveFontStyle() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(_prefsKey, _style);
   }
 
-  void setLayoutPercentage(String style) {
+  void setFontStyle(String style) {
     _style = style;
-    _saveLayoutPercentage();
+    _saveFontStyle();
     notifyListeners();
   }
 }
@@ -65,25 +65,25 @@ class BorderLineProvider extends ChangeNotifier {
 
   int get border => _border;
 
-  LayoutPercentageProvider() {
+  BorderLineProvider() {
     _border = 1;
-    _loadLayoutPercentage();
+    _loadBorderLine();
   }
 
-  Future<void> _loadLayoutPercentage() async {
+  Future<void> _loadBorderLine() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _border = prefs.getInt(_prefsKey) ?? 1;
     notifyListeners();
   }
 
-  Future<void> _saveLayoutPercentage() async {
+  Future<void> _saveBorderLine() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_prefsKey, _border);
   }
 
-  void setLayoutPercentage(int value) {
+  void setBorderLine(int value) {
     _border = value;
-    _saveLayoutPercentage();
+    _saveBorderLine();
     notifyListeners();
   }
 }

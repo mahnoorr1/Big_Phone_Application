@@ -15,15 +15,20 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   List<String> fontSizes = ['100%', '75%', '50%'];
+  List<String> borders = ['no border', 'thin line', 'line', 'thick line'];
   double? selectedFontSize;
   double? font32;
   double? font28;
   double? font20;
   double? size;
+
+  int? borderLine;
+  int? selectedBorderLine;
   getFontSizeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       size = prefs.getDouble('layoutPercentage');
+      borderLine = prefs.getInt('border');
       font28 = 28 * size!;
       font32 = 32 * size!;
       font20 = 22 * size!;
@@ -82,6 +87,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   font28 = 28 * selectedFontSize!;
                                   font32 = 32 * selectedFontSize!;
                                   state.setLayoutPercentage(selectedFontSize!);
+                                });
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Border: ',
+                          style: TextStyle(fontSize: font28),
+                        ),
+                        Consumer<BorderLineProvider>(
+                          builder: (context, borderState, _) {
+                            return DropdownButtonExample(
+                              list: borders,
+                              initial: borderLine == 0
+                                  ? 'no border'
+                                  : borderLine == 1
+                                      ? 'thin line'
+                                      : borderLine == 2
+                                          ? 'line'
+                                          : 'thick line',
+                              onSelected: (value) async {
+                                setState(() {
+                                  selectedBorderLine = value == 'no border'
+                                      ? 0
+                                      : value == 'thin line'
+                                          ? 1
+                                          : value == 'line'
+                                              ? 2
+                                              : 3;
+                                  borderState
+                                      .setBorderLine(selectedBorderLine!);
                                 });
                               },
                             );

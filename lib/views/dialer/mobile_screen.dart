@@ -336,30 +336,37 @@ class _MobileScreenState extends State<MobileScreen> {
             : size.layoutPercentage == 0.75
                 ? MediaQuery.of(context).size.height * 0.21
                 : MediaQuery.of(context).size.height * 0.18;
-        return Container(
-          width: MediaQuery.of(context).size.width < 600
-              ? MediaQuery.of(context).size.width * 0.29
-              : MediaQuery.of(context).size.height * 0.34,
-          height: MediaQuery.of(context).size.width < 600
-              ? MediaQuery.of(context).size.width * 0.29
-              : MediaQuery.of(context).size.height * 0.34,
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            border: Border.all(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: GestureDetector(
-            onTap: onTap,
-            child: Icon(
-              icon,
-              color: color,
-              size: MediaQuery.of(context).size.width < 600
-                  ? iconSizePortrait
-                  : iconSizeLandscape,
-            ),
-          ),
+        return Consumer<BorderLineProvider>(
+          builder: (context, borderLineState, _) {
+            return Container(
+              width: MediaQuery.of(context).size.width < 600
+                  ? MediaQuery.of(context).size.width * 0.29
+                  : MediaQuery.of(context).size.height * 0.34,
+              height: MediaQuery.of(context).size.width < 600
+                  ? MediaQuery.of(context).size.width * 0.29
+                  : MediaQuery.of(context).size.height * 0.34,
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                border: Border.all(
+                  color: borderLineState.border == 0
+                      ? Colors.transparent
+                      : Theme.of(context).colorScheme.primary,
+                  width: borderLineState.border.toDouble(),
+                ),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: GestureDetector(
+                onTap: onTap,
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: MediaQuery.of(context).size.width < 600
+                      ? iconSizePortrait
+                      : iconSizeLandscape,
+                ),
+              ),
+            );
+          },
         );
       },
     );

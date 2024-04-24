@@ -288,30 +288,37 @@ class _TabletScreenState extends State<TabletScreen> {
             : size.layoutPercentage == 0.75
                 ? MediaQuery.of(context).size.width * 0.21
                 : MediaQuery.of(context).size.width * 0.18;
-        return Container(
-          width: orientation == Orientation.portrait
-              ? MediaQuery.of(context).size.width * 0.24
-              : MediaQuery.of(context).size.height * 0.26,
-          height: orientation == Orientation.portrait
-              ? MediaQuery.of(context).size.width * 0.24
-              : MediaQuery.of(context).size.height * 0.26,
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            border: Border.all(
-              color: Colors.black,
-            ),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: GestureDetector(
-            onTap: onTap,
-            child: Icon(
-              icon,
-              color: color,
-              size: orientation == Orientation.portrait
-                  ? iconSizePortrait
-                  : iconSizeLandscape,
-            ),
-          ),
+        return Consumer<BorderLineProvider>(
+          builder: (context, borderLineState, _) {
+            return Container(
+              width: orientation == Orientation.portrait
+                  ? MediaQuery.of(context).size.width * 0.24
+                  : MediaQuery.of(context).size.height * 0.26,
+              height: orientation == Orientation.portrait
+                  ? MediaQuery.of(context).size.width * 0.24
+                  : MediaQuery.of(context).size.height * 0.26,
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                border: Border.all(
+                  color: borderLineState.border == 0
+                      ? Colors.transparent
+                      : Theme.of(context).colorScheme.primary,
+                  width: borderLineState.border.toDouble(),
+                ),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: GestureDetector(
+                onTap: onTap,
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: orientation == Orientation.portrait
+                      ? iconSizePortrait
+                      : iconSizeLandscape,
+                ),
+              ),
+            );
+          },
         );
       },
     );
