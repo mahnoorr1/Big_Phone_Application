@@ -34,33 +34,47 @@ class _ContactsScreenState extends State<ContactsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Kontakte'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: InkWell(
-              child: const Icon(Icons.settings),
-              onDoubleTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SettingsScreen(),
-                  ),
-                );
-              },
+    return Consumer<FontStyleProvider>(
+      builder: (context, fontStyleState, _) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              'Kontakte',
+              style: TextStyle(
+                fontStyle: fontStyleState.fontStyle == 'italic'
+                    ? FontStyle.italic
+                    : FontStyle.normal,
+                fontWeight: fontStyleState.fontStyle == 'bold'
+                    ? FontWeight.bold
+                    : FontWeight.w300,
+              ),
             ),
+            backgroundColor: Colors.blue,
+            foregroundColor: Colors.white,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: InkWell(
+                  child: const Icon(Icons.settings),
+                  onDoubleTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SettingsScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      body: _contacts != null
-          ? _buildContactsGrid()
-          : const Center(
-              child: CircularProgressIndicator(),
-            ),
+          body: _contacts != null
+              ? _buildContactsGrid()
+              : const Center(
+                  child: CircularProgressIndicator(),
+                ),
+        );
+      },
     );
   }
 
@@ -130,18 +144,27 @@ class _ContactsScreenState extends State<ContactsScreen> {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      contact.displayName ?? '',
-                      style: TextStyle(
-                        fontSize: itemWidth * 0.25 * state.layoutPercentage,
-                        fontWeight: FontWeight.w600,
+                child: Consumer<FontStyleProvider>(
+                  builder: (context, fontStyleState, _) {
+                    return Center(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          contact.displayName ?? '',
+                          style: TextStyle(
+                            fontSize: itemWidth * 0.25 * state.layoutPercentage,
+                            fontStyle: fontStyleState.fontStyle == 'italic'
+                                ? FontStyle.italic
+                                : FontStyle.normal,
+                            fontWeight: fontStyleState.fontStyle == 'bold'
+                                ? FontWeight.bold
+                                : FontWeight.w300,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ),
             );
@@ -156,74 +179,96 @@ class _ContactsScreenState extends State<ContactsScreen> {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            '$contactName\nanrufen?',
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
-          ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.all<Color>(Colors.red),
-                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+        return Consumer<FontStyleProvider>(
+          builder: (context, fontStyleState, _) {
+            return AlertDialog(
+              title: Text(
+                '$contactName\nanrufen?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontStyle: fontStyleState.fontStyle == 'italic'
+                        ? FontStyle.italic
+                        : FontStyle.normal,
+                    fontWeight: fontStyleState.fontStyle == 'bold'
+                        ? FontWeight.bold
+                        : FontWeight.w300,
+                    fontSize: 40),
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStateProperty.all<Color>(Colors.red),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                      ),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.25,
+                        child: Text(
+                          'Nein',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 30,
+                            fontStyle: fontStyleState.fontStyle == 'italic'
+                                ? FontStyle.italic
+                                : FontStyle.normal,
+                            fontWeight: fontStyleState.fontStyle == 'bold'
+                                ? FontWeight.bold
+                                : FontWeight.w300,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.25,
-                    child: const Text(
-                      'Nein',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w600,
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _makeCall(phoneNumber);
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStateProperty.all<Color>(Colors.green),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                      ),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.25,
+                        child: Text(
+                          'Ja',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 30,
+                            fontStyle: fontStyleState.fontStyle == 'italic'
+                                ? FontStyle.italic
+                                : FontStyle.normal,
+                            fontWeight: fontStyleState.fontStyle == 'bold'
+                                ? FontWeight.bold
+                                : FontWeight.w300,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    _makeCall(phoneNumber);
-                  },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        WidgetStateProperty.all<Color>(Colors.green),
-                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                  ),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.25,
-                    child: const Text(
-                      'Ja',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
+                  ],
                 ),
               ],
-            ),
-          ],
+            );
+          },
         );
       },
     );

@@ -6,12 +6,14 @@ import '../providers/app_provider.dart';
 class DropdownButtonExample extends StatefulWidget {
   final List<String> list;
   final String initial;
+  final String label;
   final void Function(String) onSelected;
 
   const DropdownButtonExample({
     required this.list,
     required this.onSelected,
     required this.initial,
+    required this.label,
     Key? key,
   }) : super(key: key);
 
@@ -20,7 +22,7 @@ class DropdownButtonExample extends StatefulWidget {
 }
 
 class _DropdownButtonExampleState extends State<DropdownButtonExample> {
-  String? dropdownValue; // Initialize with null to avoid assertion error
+  String? dropdownValue;
 
   @override
   void initState() {
@@ -30,36 +32,69 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
-      underline: Container(
-        height: 2,
-        color: Colors.deepPurpleAccent,
-      ),
-      onChanged: (String? value) {
-        if (value != null) {
-          setState(() {
-            dropdownValue = value;
-          });
-          widget.onSelected(value);
-        }
-      },
-      items: widget.list.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Consumer<LayoutPercentageProvider>(
-            builder: (context, state, _) {
-              return Text(
-                value,
-                style: TextStyle(fontSize: 20 * state.layoutPercentage),
-              );
-            },
-          ),
+    return Consumer<FontStyleProvider>(
+      builder: (context, fontStyleState, _) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Consumer<LayoutPercentageProvider>(
+              builder: (context, layoutState, _) {
+                return Text(
+                  widget.label,
+                  style: TextStyle(
+                    fontSize: 30 * layoutState.layoutPercentage,
+                    fontStyle: fontStyleState.fontStyle == 'italic'
+                        ? FontStyle.italic
+                        : FontStyle.normal,
+                    fontWeight: fontStyleState.fontStyle == 'bold'
+                        ? FontWeight.bold
+                        : FontWeight.w300,
+                  ),
+                );
+              },
+            ),
+            DropdownButton<String>(
+              value: dropdownValue,
+              icon: const Icon(Icons.arrow_downward),
+              elevation: 16,
+              style: const TextStyle(color: Colors.deepPurple),
+              underline: Container(
+                height: 2,
+                color: Colors.deepPurpleAccent,
+              ),
+              onChanged: (String? value) {
+                if (value != null) {
+                  setState(() {
+                    dropdownValue = value;
+                  });
+                  widget.onSelected(value);
+                }
+              },
+              items: widget.list.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Consumer<LayoutPercentageProvider>(
+                    builder: (context, state, _) {
+                      return Text(
+                        value,
+                        style: TextStyle(
+                          fontSize: 22 * state.layoutPercentage,
+                          fontStyle: fontStyleState.fontStyle == 'italic'
+                              ? FontStyle.italic
+                              : FontStyle.normal,
+                          fontWeight: fontStyleState.fontStyle == 'bold'
+                              ? FontWeight.bold
+                              : FontWeight.w300,
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
         );
-      }).toList(),
+      },
     );
   }
 }

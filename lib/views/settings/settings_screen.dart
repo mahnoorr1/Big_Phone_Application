@@ -16,6 +16,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   List<String> fontSizes = ['100%', '75%', '50%'];
   List<String> borders = ['no border', 'thin line', 'line', 'thick line'];
+  List<String> fontStyles = ['regular', 'italic', 'bold'];
   double? selectedFontSize;
   double? font32;
   double? font28;
@@ -24,11 +25,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   int? borderLine;
   int? selectedBorderLine;
+
+  String? fontStyle;
   getFontSizeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       size = prefs.getDouble('layoutPercentage');
       borderLine = prefs.getInt('border');
+      fontStyle = prefs.getString('style');
       font28 = 28 * size!;
       font32 = 32 * size!;
       font20 = 22 * size!;
@@ -47,29 +51,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ? const Center(
             child: CircularProgressIndicator(),
           )
-        : Scaffold(
-            appBar: AppBar(
-              title: const Text('Einstellungen'),
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-            ),
-            body: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const ThemeSwitcher(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        : Consumer<FontStyleProvider>(
+            builder: (context, fontStyleState, _) {
+              return Scaffold(
+                appBar: AppBar(
+                  title: Text(
+                    'Einstellungen',
+                    style: TextStyle(
+                      fontStyle: fontStyleState.fontStyle == 'italic'
+                          ? FontStyle.italic
+                          : FontStyle.normal,
+                      fontWeight: fontStyleState.fontStyle == 'bold'
+                          ? FontWeight.bold
+                          : FontWeight.w300,
+                    ),
+                  ),
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                ),
+                body: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(
-                          'Font Size: ',
-                          style: TextStyle(fontSize: font28),
-                        ),
+                        const ThemeSwitcher(),
+                        const SizedBox(height: 10),
                         Consumer<LayoutPercentageProvider>(
                           builder: (context, state, _) {
                             return DropdownButtonExample(
+                              label: 'Font Size',
                               list: fontSizes,
                               initial: size == 1.0
                                   ? '100%'
@@ -92,22 +103,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             );
                           },
                         ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Border: ',
-                          style: TextStyle(fontSize: font28),
+                        const SizedBox(
+                          height: 10,
                         ),
                         Consumer<BorderLineProvider>(
                           builder: (context, borderState, _) {
                             return DropdownButtonExample(
                               list: borders,
+                              label: 'Border',
                               initial: borderLine == 0
                                   ? 'no border'
                                   : borderLine == 1
@@ -131,53 +134,75 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             );
                           },
                         ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DropdownButtonExample(
+                          list: fontStyles,
+                          label: 'Font Style',
+                          initial: fontStyle == 'regular'
+                              ? 'regular'
+                              : fontStyle == 'italic'
+                                  ? 'italic'
+                                  : 'bold',
+                          onSelected: (value) async {
+                            setState(() {
+                              fontStyle = value == 'regular'
+                                  ? 'regular'
+                                  : value == 'italic'
+                                      ? 'italic'
+                                      : 'bold';
+                              fontStyleState.setFontStyle(fontStyle!);
+                            });
+                          },
+                        ),
                       ],
                     ),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        'Abonnementpläne',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: (font32),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      child: Column(
-                        children: [
-                          subscriptionCard(
-                            'Standard',
-                            'Frei',
-                            'Anzeigen aktiviert\nStandardmäßig abonniert',
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          subscriptionCard(
-                            'Monatlicher Plan',
-                            '€10',
-                            'Keine Werbung\nBessere Erfahrung',
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          subscriptionCard(
-                            'Jahresplan',
-                            '€50',
-                            'Keine Werbung\nBessere Erfahrung',
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    // Align(
+                    //   alignment: Alignment.topLeft,
+                    //   child: Text(
+                    //     'Abonnementpläne',
+                    //     style: TextStyle(
+                    //       fontWeight: FontWeight.w500,
+                    //       fontSize: (font32),
+                    //     ),
+                    //   ),
+                    // ),
+                    // const SizedBox(
+                    //   height: 20,
+                    // ),
+                    // SizedBox(
+                    //   width: MediaQuery.of(context).size.width * 0.9,
+                    //   child: Column(
+                    //     children: [
+                    //       subscriptionCard(
+                    //         'Standard',
+                    //         'Frei',
+                    //         'Anzeigen aktiviert\nStandardmäßig abonniert',
+                    //       ),
+                    //       const SizedBox(
+                    //         height: 20,
+                    //       ),
+                    //       subscriptionCard(
+                    //         'Monatlicher Plan',
+                    //         '€10',
+                    //         'Keine Werbung\nBessere Erfahrung',
+                    //       ),
+                    //       const SizedBox(
+                    //         height: 20,
+                    //       ),
+                    //       subscriptionCard(
+                    //         'Jahresplan',
+                    //         '€50',
+                    //         'Keine Werbung\nBessere Erfahrung',
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           );
   }
 

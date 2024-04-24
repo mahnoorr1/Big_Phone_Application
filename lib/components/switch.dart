@@ -23,11 +23,23 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                themeProvider.themeDataStyle == ThemeDataStyle.dark
-                    ? 'Dark Theme'
-                    : 'Light Theme',
-                style: TextStyle(fontSize: 25.0 * state.layoutPercentage),
+              Consumer<FontStyleProvider>(
+                builder: (context, fontStyleState, _) {
+                  return Text(
+                    themeProvider.themeDataStyle == ThemeDataStyle.dark
+                        ? 'Dark Theme'
+                        : 'Light Theme',
+                    style: TextStyle(
+                      fontSize: 30.0 * state.layoutPercentage,
+                      fontStyle: fontStyleState.fontStyle == 'italic'
+                          ? FontStyle.italic
+                          : FontStyle.normal,
+                      fontWeight: fontStyleState.fontStyle == 'bold'
+                          ? FontWeight.bold
+                          : FontWeight.w300,
+                    ),
+                  );
+                },
               ),
               const SizedBox(width: 10.0),
               Transform.scale(

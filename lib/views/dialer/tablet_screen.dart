@@ -105,16 +105,25 @@ class _TabletScreenState extends State<TabletScreen> {
                     height: 150,
                     child: FittedBox(
                       fit: BoxFit.contain,
-                      child: Text(
-                        enteredNumber,
-                        style: TextStyle(
-                          fontSize: size.layoutPercentage == 1.0
-                              ? fontSize
-                              : size.layoutPercentage == 0.75
-                                  ? fontSize * 0.75
-                                  : fontSize * 0.5,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      child: Consumer<FontStyleProvider>(
+                        builder: (context, fontStyleState, _) {
+                          return Text(
+                            enteredNumber,
+                            style: TextStyle(
+                              fontSize: size.layoutPercentage == 1.0
+                                  ? fontSize
+                                  : size.layoutPercentage == 0.75
+                                      ? fontSize * 0.75
+                                      : fontSize * 0.5,
+                              fontStyle: fontStyleState.fontStyle == 'italic'
+                                  ? FontStyle.italic
+                                  : FontStyle.normal,
+                              fontWeight: fontStyleState.fontStyle == 'bold'
+                                  ? FontWeight.bold
+                                  : FontWeight.w300,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -163,109 +172,133 @@ class _TabletScreenState extends State<TabletScreen> {
   }
 
   Widget _buildLandscapeLayout(Orientation orientation) {
-    return Consumer<LayoutPercentageProvider>(
-      builder: (context, size, _) {
-        return Builder(builder: (context) {
-          double maxWidth = MediaQuery.of(context).size.width * 0.5;
-          double initialFontSize = maxWidth * 0.145;
-          double fontSize = initialFontSize;
+    return Consumer<FontStyleProvider>(
+      builder: (context, fontStyleState, _) {
+        return Consumer<LayoutPercentageProvider>(
+          builder: (context, size, _) {
+            return Builder(builder: (context) {
+              double maxWidth = MediaQuery.of(context).size.width * 0.5;
+              double initialFontSize = maxWidth * 0.145;
+              double fontSize = initialFontSize;
 
-          TextPainter textPainter = TextPainter(
-            text: TextSpan(
-              text: enteredNumber,
-              style: TextStyle(
-                fontSize: size.layoutPercentage == 1.0
-                    ? fontSize
-                    : size.layoutPercentage == 0.75
-                        ? fontSize * 0.75
-                        : fontSize * 0.5,
-              ),
-            ),
-            textDirection: TextDirection.ltr,
-          );
-          textPainter.layout();
+              TextPainter textPainter = TextPainter(
+                text: TextSpan(
+                  text: enteredNumber,
+                  style: TextStyle(
+                    fontSize: size.layoutPercentage == 1.0
+                        ? fontSize
+                        : size.layoutPercentage == 0.75
+                            ? fontSize * 0.75
+                            : fontSize * 0.5,
+                    fontStyle: fontStyleState.fontStyle == 'italic'
+                        ? FontStyle.italic
+                        : FontStyle.normal,
+                    fontWeight: fontStyleState.fontStyle == 'bold'
+                        ? FontWeight.bold
+                        : FontWeight.w300,
+                  ),
+                ),
+                textDirection: TextDirection.ltr,
+              );
+              textPainter.layout();
 
-          while (textPainter.size.width > maxWidth) {
-            fontSize -= 1.0;
-            textPainter.text = TextSpan(
-              text: enteredNumber,
-              style: TextStyle(
-                fontSize: size.layoutPercentage == 1.0
-                    ? fontSize
-                    : size.layoutPercentage == 0.75
-                        ? fontSize * 0.75
-                        : fontSize * 0.5,
-              ),
-            );
-            textPainter.layout();
-          }
-          return Padding(
-            padding: const EdgeInsets.only(right: 50),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Column(
+              while (textPainter.size.width > maxWidth) {
+                fontSize -= 1.0;
+                textPainter.text = TextSpan(
+                  text: enteredNumber,
+                  style: TextStyle(
+                    fontSize: size.layoutPercentage == 1.0
+                        ? fontSize
+                        : size.layoutPercentage == 0.75
+                            ? fontSize * 0.75
+                            : fontSize * 0.5,
+                    fontStyle: fontStyleState.fontStyle == 'italic'
+                        ? FontStyle.italic
+                        : FontStyle.normal,
+                    fontWeight: fontStyleState.fontStyle == 'bold'
+                        ? FontWeight.bold
+                        : FontWeight.w300,
+                  ),
+                );
+                textPainter.layout();
+              }
+              return Padding(
+                padding: const EdgeInsets.only(right: 50),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      enteredNumber,
-                      style: TextStyle(
-                        fontSize: size.layoutPercentage == 1.0
-                            ? fontSize
-                            : size.layoutPercentage == 0.75
-                                ? fontSize * 0.75
-                                : fontSize * 0.5,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.02),
-                        _buildActionButton(
-                          icon: Icons.list,
-                          color: Colors.blue,
-                          onTap: onListTap,
-                          orientation: orientation,
+                        const SizedBox(
+                          height: 20,
                         ),
-                        SizedBox(
-                            width: MediaQuery.of(context).size.height * 0.02),
-                        _buildActionButton(
-                          icon: Icons.phone,
-                          color: Colors.green,
-                          onTap: onCallTap,
-                          orientation: orientation,
+                        Text(
+                          enteredNumber,
+                          style: TextStyle(
+                            fontSize: size.layoutPercentage == 1.0
+                                ? fontSize
+                                : size.layoutPercentage == 0.75
+                                    ? fontSize * 0.75
+                                    : fontSize * 0.5,
+                            fontStyle: fontStyleState.fontStyle == 'italic'
+                                ? FontStyle.italic
+                                : FontStyle.normal,
+                            fontWeight: fontStyleState.fontStyle == 'bold'
+                                ? FontWeight.bold
+                                : FontWeight.w300,
+                          ),
                         ),
-                        SizedBox(
-                            width: MediaQuery.of(context).size.height * 0.02),
-                        _buildActionButton(
-                          icon: Icons.arrow_back,
-                          color: Colors.blue,
-                          onTap: onBackspaceTap,
-                          orientation: orientation,
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.02),
+                            _buildActionButton(
+                              icon: Icons.list,
+                              color: Colors.blue,
+                              onTap: onListTap,
+                              orientation: orientation,
+                            ),
+                            SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.height * 0.02),
+                            _buildActionButton(
+                              icon: Icons.phone,
+                              color: Colors.green,
+                              onTap: onCallTap,
+                              orientation: orientation,
+                            ),
+                            SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.height * 0.02),
+                            _buildActionButton(
+                              icon: Icons.arrow_back,
+                              color: Colors.blue,
+                              onTap: onBackspaceTap,
+                              orientation: orientation,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
                         ),
                       ],
                     ),
-                    const SizedBox(
-                      height: 20,
+                    DialerWidget(
+                      enteredNumber: enteredNumber,
+                      onNumberButtonPressed: onNumberButtonPressed,
                     ),
                   ],
                 ),
-                DialerWidget(
-                  enteredNumber: enteredNumber,
-                  onNumberButtonPressed: onNumberButtonPressed,
-                ),
-              ],
-            ),
-          );
-        });
+              );
+            });
+          },
+        );
       },
     );
   }
