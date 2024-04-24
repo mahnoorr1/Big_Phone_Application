@@ -1,74 +1,140 @@
-import 'package:big_phone_us_new/stripe/stripe_payment.dart';
+import 'package:big_phone_us_new/components/switch.dart';
+import 'package:big_phone_us_new/providers/app_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../components/drop_down.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  List<String> fontSizes = ['100%', '75%', '50%'];
+  double? selectedFontSize;
+  double? font32;
+  double? font28;
+  double? font20;
+  double? size;
+  getFontSizeData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      size = prefs.getDouble('layoutPercentage');
+      font28 = 28 * size!;
+      font32 = 32 * size!;
+      font20 = 22 * size!;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getFontSizeData();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Einstellungen'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  'Abonnementpläne',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 32,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.9,
+    return size == null
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: const Text('Einstellungen'),
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+            ),
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    subscriptionCard(
-                      'Standard',
-                      'Frei',
-                      'Anzeigen aktiviert\nStandardmäßig abonniert',
+                    const ThemeSwitcher(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Font Size: ',
+                          style: TextStyle(fontSize: font28),
+                        ),
+                        Consumer<LayoutPercentageProvider>(
+                          builder: (context, state, _) {
+                            return DropdownButtonExample(
+                              list: fontSizes,
+                              initial: size == 1.0
+                                  ? '100%'
+                                  : size == 0.75
+                                      ? '75%'
+                                      : '50%',
+                              onSelected: (value) async {
+                                setState(() {
+                                  selectedFontSize = value == '100%'
+                                      ? 1.0
+                                      : value == '75%'
+                                          ? 0.75
+                                          : 0.6;
+                                  font20 = 22 * selectedFontSize!;
+                                  font28 = 28 * selectedFontSize!;
+                                  font32 = 32 * selectedFontSize!;
+                                  state.setLayoutPercentage(selectedFontSize!);
+                                });
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        'Abonnementpläne',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: (font32),
+                        ),
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
                     ),
-                    subscriptionCard(
-                      'Monatlicher Plan',
-                      '€10',
-                      'Keine Werbung\nBessere Erfahrung',
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    subscriptionCard(
-                      'Jahresplan',
-                      '€50',
-                      'Keine Werbung\nBessere Erfahrung',
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: Column(
+                        children: [
+                          subscriptionCard(
+                            'Standard',
+                            'Frei',
+                            'Anzeigen aktiviert\nStandardmäßig abonniert',
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          subscriptionCard(
+                            'Monatlicher Plan',
+                            '€10',
+                            'Keine Werbung\nBessere Erfahrung',
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          subscriptionCard(
+                            'Jahresplan',
+                            '€50',
+                            'Keine Werbung\nBessere Erfahrung',
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
   }
 
   Widget subscriptionCard(
@@ -99,8 +165,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 28,
+                    style: TextStyle(
+                      fontSize: font28,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -109,7 +175,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: Text(
                       price,
                       style: TextStyle(
-                        fontSize: 32,
+                        fontSize: font32,
                         fontWeight: FontWeight.w600,
                         color: price == 'Frei'
                             ? const Color.fromARGB(255, 21, 156, 26)
@@ -131,10 +197,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           border: Border.all(
                             color: const Color.fromARGB(255, 21, 156, 26),
                           )),
-                      child: const Icon(
+                      child: Icon(
                         Icons.check,
                         color: Color.fromARGB(255, 21, 156, 26),
-                        size: 28,
+                        size: font28,
                       ),
                     ),
                     const SizedBox(
@@ -142,7 +208,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     Text(
                       details,
-                      style: const TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: font20),
                     ),
                   ],
                 ),
@@ -157,9 +223,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           foregroundColor:
                               WidgetStateProperty.all<Color>(Colors.white),
                         ),
-                        child: const Text(
+                        child: Text(
                           "Abonnieren",
-                          style: TextStyle(fontSize: 28),
+                          style: TextStyle(fontSize: font28),
                         ),
                         onPressed: () {
                           // Payment().makePayment(context, price);

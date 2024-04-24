@@ -1,4 +1,6 @@
+import 'package:big_phone_us_new/providers/app_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class DialerWidget extends StatefulWidget {
   final String enteredNumber;
@@ -82,31 +84,45 @@ class _DialerWidgetState extends State<DialerWidget> {
       onTap: () {
         widget.onNumberButtonPressed(text);
       },
-      child: OrientationBuilder(builder: (context, orientation) {
-        return Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            border: Border.all(
-              color: Colors.black,
-            ),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: Align(
-            alignment: alignment,
-            child: Center(
-              child: Text(
-                text,
-                style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width < 600
-                      ? MediaQuery.of(context).size.height * 0.08
-                      : MediaQuery.of(context).size.width * 0.05,
-                  fontWeight: FontWeight.bold,
+      child: Consumer<LayoutPercentageProvider>(
+        builder: (context, state, _) {
+          return OrientationBuilder(builder: (context, orientation) {
+            double mobileFont = state.layoutPercentage == 1.0
+                ? MediaQuery.of(context).size.height * 0.08
+                : state.layoutPercentage == 0.75
+                    ? MediaQuery.of(context).size.height * 0.08 * 0.75
+                    : MediaQuery.of(context).size.height * 0.08 * 0.5;
+            double tabletFont = state.layoutPercentage == 1.0
+                ? MediaQuery.of(context).size.width * 0.05
+                : state.layoutPercentage == 0.75
+                    ? MediaQuery.of(context).size.width * 0.05 * 0.75
+                    : MediaQuery.of(context).size.width * 0.05 * 0.5;
+            return Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Align(
+                alignment: alignment,
+                child: Center(
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width < 600
+                          ? mobileFont
+                          : tabletFont,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        );
-      }),
+            );
+          });
+        },
+      ),
     );
   }
 }

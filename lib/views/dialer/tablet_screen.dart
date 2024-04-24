@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
-
+import 'package:provider/provider.dart';
+import '../../providers/app_provider.dart';
 import '../contacts/contact_screen.dart';
 import '../settings/settings_screen.dart';
 import 'dialer_widget.dart';
 
 class TabletScreen extends StatefulWidget {
-  const TabletScreen({super.key});
-
   @override
   State<TabletScreen> createState() => _TabletScreenState();
 }
 
 class _TabletScreenState extends State<TabletScreen> {
   String enteredNumber = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,12 +29,15 @@ class _TabletScreenState extends State<TabletScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: InkWell(
-              child: const Icon(Icons.settings),
+              child: const Icon(
+                Icons.settings,
+                color: Colors.white,
+              ),
               onDoubleTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const SettingsScreen(),
+                    builder: (context) => SettingsScreen(),
                   ),
                 );
               },
@@ -90,111 +93,38 @@ class _TabletScreenState extends State<TabletScreen> {
         double initialFontSize = maxWidth * 0.13;
         double fontSize = initialFontSize;
 
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Container(
-                width: double.infinity,
-                height: 150,
-                child: FittedBox(
-                  fit: BoxFit.contain,
-                  child: Text(
-                    enteredNumber,
-                    style: TextStyle(
-                      fontSize: initialFontSize,
-                      fontWeight: FontWeight.w500,
+        return Consumer<LayoutPercentageProvider>(
+          builder: (context, size, _) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Container(
+                    width: double.infinity,
+                    height: 150,
+                    child: FittedBox(
+                      fit: BoxFit.contain,
+                      child: Text(
+                        enteredNumber,
+                        style: TextStyle(
+                          fontSize: size.layoutPercentage == 1.0
+                              ? fontSize
+                              : size.layoutPercentage == 0.75
+                                  ? fontSize * 0.75
+                                  : fontSize * 0.5,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(
-              height: 2,
-            ),
-            DialerWidget(
-              enteredNumber: enteredNumber,
-              onNumberButtonPressed: onNumberButtonPressed,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildActionButton(
-                  icon: Icons.list,
-                  color: Colors.blue,
-                  onTap: onListTap,
-                  orientation: orientation,
-                ),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.02),
-                _buildActionButton(
-                  icon: Icons.phone,
-                  color: Colors.green,
-                  onTap: onCallTap,
-                  orientation: orientation,
-                ),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.02),
-                _buildActionButton(
-                  icon: Icons.arrow_back,
-                  color: Colors.blue,
-                  onTap: onBackspaceTap,
-                  orientation: orientation,
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildLandscapeLayout(Orientation orientation) {
-    return Builder(builder: (context) {
-      double maxWidth = MediaQuery.of(context).size.width * 0.5;
-      double initialFontSize = maxWidth * 0.145;
-      double fontSize = initialFontSize;
-
-      TextPainter textPainter = TextPainter(
-        text: TextSpan(
-          text: enteredNumber,
-          style: TextStyle(
-            fontSize: fontSize,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      );
-      textPainter.layout();
-
-      while (textPainter.size.width > maxWidth) {
-        fontSize -= 1.0;
-        textPainter.text = TextSpan(
-          text: enteredNumber,
-          style: TextStyle(
-            fontSize: fontSize,
-          ),
-        );
-        textPainter.layout();
-      }
-      return Padding(
-        padding: const EdgeInsets.only(right: 50),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
                 const SizedBox(
-                  height: 20,
+                  height: 2,
                 ),
-                Text(
-                  enteredNumber,
-                  style: TextStyle(
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.w500,
-                  ),
+                DialerWidget(
+                  enteredNumber: enteredNumber,
+                  onNumberButtonPressed: onNumberButtonPressed,
                 ),
                 const SizedBox(
                   height: 20,
@@ -202,21 +132,20 @@ class _TabletScreenState extends State<TabletScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                     _buildActionButton(
                       icon: Icons.list,
                       color: Colors.blue,
                       onTap: onListTap,
                       orientation: orientation,
                     ),
-                    SizedBox(width: MediaQuery.of(context).size.height * 0.02),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                     _buildActionButton(
                       icon: Icons.phone,
                       color: Colors.green,
                       onTap: onCallTap,
                       orientation: orientation,
                     ),
-                    SizedBox(width: MediaQuery.of(context).size.height * 0.02),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                     _buildActionButton(
                       icon: Icons.arrow_back,
                       color: Colors.blue,
@@ -225,19 +154,120 @@ class _TabletScreenState extends State<TabletScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 20,
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildLandscapeLayout(Orientation orientation) {
+    return Consumer<LayoutPercentageProvider>(
+      builder: (context, size, _) {
+        return Builder(builder: (context) {
+          double maxWidth = MediaQuery.of(context).size.width * 0.5;
+          double initialFontSize = maxWidth * 0.145;
+          double fontSize = initialFontSize;
+
+          TextPainter textPainter = TextPainter(
+            text: TextSpan(
+              text: enteredNumber,
+              style: TextStyle(
+                fontSize: size.layoutPercentage == 1.0
+                    ? fontSize
+                    : size.layoutPercentage == 0.75
+                        ? fontSize * 0.75
+                        : fontSize * 0.5,
+              ),
+            ),
+            textDirection: TextDirection.ltr,
+          );
+          textPainter.layout();
+
+          while (textPainter.size.width > maxWidth) {
+            fontSize -= 1.0;
+            textPainter.text = TextSpan(
+              text: enteredNumber,
+              style: TextStyle(
+                fontSize: size.layoutPercentage == 1.0
+                    ? fontSize
+                    : size.layoutPercentage == 0.75
+                        ? fontSize * 0.75
+                        : fontSize * 0.5,
+              ),
+            );
+            textPainter.layout();
+          }
+          return Padding(
+            padding: const EdgeInsets.only(right: 50),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      enteredNumber,
+                      style: TextStyle(
+                        fontSize: size.layoutPercentage == 1.0
+                            ? fontSize
+                            : size.layoutPercentage == 0.75
+                                ? fontSize * 0.75
+                                : fontSize * 0.5,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.02),
+                        _buildActionButton(
+                          icon: Icons.list,
+                          color: Colors.blue,
+                          onTap: onListTap,
+                          orientation: orientation,
+                        ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.height * 0.02),
+                        _buildActionButton(
+                          icon: Icons.phone,
+                          color: Colors.green,
+                          onTap: onCallTap,
+                          orientation: orientation,
+                        ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.height * 0.02),
+                        _buildActionButton(
+                          icon: Icons.arrow_back,
+                          color: Colors.blue,
+                          onTap: onBackspaceTap,
+                          orientation: orientation,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                ),
+                DialerWidget(
+                  enteredNumber: enteredNumber,
+                  onNumberButtonPressed: onNumberButtonPressed,
                 ),
               ],
             ),
-            DialerWidget(
-              enteredNumber: enteredNumber,
-              onNumberButtonPressed: onNumberButtonPressed,
-            ),
-          ],
-        ),
-      );
-    });
+          );
+        });
+      },
+    );
   }
 
   Widget _buildActionButton(
@@ -245,30 +275,45 @@ class _TabletScreenState extends State<TabletScreen> {
       required Color color,
       required VoidCallback onTap,
       required Orientation orientation}) {
-    return Container(
-      width: orientation == Orientation.portrait
-          ? MediaQuery.of(context).size.width * 0.24
-          : MediaQuery.of(context).size.height * 0.26,
-      height: orientation == Orientation.portrait
-          ? MediaQuery.of(context).size.width * 0.24
-          : MediaQuery.of(context).size.height * 0.26,
-      decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
-        border: Border.all(
-          color: Colors.black,
-        ),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Icon(
-          icon,
-          color: color,
-          size: orientation == Orientation.portrait
-              ? MediaQuery.of(context).size.width * 0.2
-              : MediaQuery.of(context).size.height * 0.25,
-        ),
-      ),
+    return Consumer<LayoutPercentageProvider>(
+      builder: (context, size, _) {
+        double iconSizePortrait = size.layoutPercentage == 1.0
+            ? MediaQuery.of(context).size.width * 0.2
+            : size.layoutPercentage == 0.75
+                ? MediaQuery.of(context).size.width * 0.17
+                : MediaQuery.of(context).size.width * 0.14;
+
+        double iconSizeLandscape = size.layoutPercentage == 1.0
+            ? MediaQuery.of(context).size.width * 0.25
+            : size.layoutPercentage == 0.75
+                ? MediaQuery.of(context).size.width * 0.21
+                : MediaQuery.of(context).size.width * 0.18;
+        return Container(
+          width: orientation == Orientation.portrait
+              ? MediaQuery.of(context).size.width * 0.24
+              : MediaQuery.of(context).size.height * 0.26,
+          height: orientation == Orientation.portrait
+              ? MediaQuery.of(context).size.width * 0.24
+              : MediaQuery.of(context).size.height * 0.26,
+          decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            border: Border.all(
+              color: Colors.black,
+            ),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: GestureDetector(
+            onTap: onTap,
+            child: Icon(
+              icon,
+              color: color,
+              size: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+            ),
+          ),
+        );
+      },
     );
   }
 }

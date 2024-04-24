@@ -1,10 +1,28 @@
+import 'package:big_phone_us_new/providers/app_provider.dart';
+import 'package:big_phone_us_new/providers/theme_provider.dart';
 import 'package:big_phone_us_new/views/dialer/dialer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(providers: [
+      ChangeNotifierProvider<LayoutPercentageProvider>(
+        create: (_) => LayoutPercentageProvider(),
+      ),
+      ChangeNotifierProvider<ThemeProvider>(
+        create: (_) => ThemeProvider(),
+      ),
+      ChangeNotifierProvider<BorderLineProvider>(
+        create: (_) => BorderLineProvider(),
+      ),
+      ChangeNotifierProvider<FontStyleProvider>(
+        create: (_) => FontStyleProvider(),
+      ),
+    ], child: const MyApp()),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -25,10 +43,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: Provider.of<ThemeProvider>(context).themeDataStyle,
       home: const DialerScreen(),
     );
   }

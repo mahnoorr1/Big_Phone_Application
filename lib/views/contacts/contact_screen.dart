@@ -2,7 +2,8 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+import 'package:provider/provider.dart';
+import '../../providers/app_provider.dart';
 import '../settings/settings_screen.dart';
 
 class ContactsScreen extends StatefulWidget {
@@ -47,7 +48,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const SettingsScreen(),
+                    builder: (context) => SettingsScreen(),
                   ),
                 );
               },
@@ -79,13 +80,20 @@ class _ContactsScreenState extends State<ContactsScreen> {
             onTap: () {
               Navigator.of(context).pop(); // Navigate back
             },
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              padding: const EdgeInsets.all(8.0),
-              child: const Icon(Icons.list, color: Colors.blue, size: 48.0),
+            child: Consumer<LayoutPercentageProvider>(
+              builder: (context, state, _) {
+                return Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  padding: const EdgeInsets.all(4.0),
+                  child: Icon(Icons.list,
+                      color: Colors.blue, size: 55.0 * state.layoutPercentage),
+                );
+              },
             ),
           );
         } else {
@@ -101,37 +109,43 @@ class _ContactsScreenState extends State<ContactsScreen> {
         ? contact.phones!.first.value ?? ''
         : '';
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        double itemWidth = constraints.maxWidth;
-        double itemHeight = itemWidth * 0.4;
+    return Consumer<LayoutPercentageProvider>(
+      builder: (context, state, _) {
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            double itemWidth = constraints.maxWidth;
+            double itemHeight = itemWidth * 0.4;
 
-        return InkWell(
-          onTap: () async {
-            _showConfirmationDialog(contact.displayName ?? '', phoneNumber);
-          },
-          child: Container(
-            width: itemWidth,
-            height: itemHeight,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            padding: EdgeInsets.all(8.0),
-            child: Center(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  contact.displayName ?? '',
-                  style: TextStyle(
-                    fontSize: itemWidth * 0.18,
-                    fontWeight: FontWeight.w600,
+            return InkWell(
+              onTap: () async {
+                _showConfirmationDialog(contact.displayName ?? '', phoneNumber);
+              },
+              child: Container(
+                width: itemWidth,
+                height: itemHeight,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.primary,
                   ),
-                  textAlign: TextAlign.center,
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      contact.displayName ?? '',
+                      style: TextStyle(
+                        fontSize: itemWidth * 0.25 * state.layoutPercentage,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
@@ -154,12 +168,11 @@ class _ContactsScreenState extends State<ContactsScreen> {
               children: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.of(context).pop();
                   },
                   style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.red),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    backgroundColor: WidgetStateProperty.all<Color>(Colors.red),
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'mobile_screen.dart';
 import 'tablet_screen.dart';
 
@@ -18,7 +17,7 @@ class _DialerScreenState extends State<DialerScreen> {
           MediaQuery.of(context).size.height < 600) {
         return MobileScreen();
       } else {
-        return const TabletScreen();
+        return TabletScreen();
       }
     });
   }
