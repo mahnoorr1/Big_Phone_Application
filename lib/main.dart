@@ -21,6 +21,9 @@ void main() {
       ChangeNotifierProvider<FontStyleProvider>(
         create: (_) => FontStyleProvider(),
       ),
+      ChangeNotifierProvider<FontProvider>(
+        create: (_) => FontProvider(),
+      ),
     ], child: const MyApp()),
   );
 }

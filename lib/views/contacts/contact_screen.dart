@@ -38,16 +38,21 @@ class _ContactsScreenState extends State<ContactsScreen> {
       builder: (context, fontStyleState, _) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(
-              'Kontakte',
-              style: TextStyle(
-                fontStyle: fontStyleState.fontStyle == 'italic'
-                    ? FontStyle.italic
-                    : FontStyle.normal,
-                fontWeight: fontStyleState.fontStyle == 'bold'
-                    ? FontWeight.bold
-                    : FontWeight.w300,
-              ),
+            title: Consumer<FontProvider>(
+              builder: (context, fontState, _) {
+                return Text(
+                  'Kontakte',
+                  style: TextStyle(
+                    fontStyle: fontStyleState.fontStyle == 'italic'
+                        ? FontStyle.italic
+                        : FontStyle.normal,
+                    fontWeight: fontStyleState.fontStyle == 'bold'
+                        ? FontWeight.bold
+                        : FontWeight.w300,
+                    fontFamily: fontState.font,
+                  ),
+                );
+              },
             ),
             backgroundColor: Colors.blue,
             foregroundColor: Colors.white,
@@ -149,18 +154,24 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     return Center(
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
-                        child: Text(
-                          contact.displayName ?? '',
-                          style: TextStyle(
-                            fontSize: itemWidth * 0.25 * state.layoutPercentage,
-                            fontStyle: fontStyleState.fontStyle == 'italic'
-                                ? FontStyle.italic
-                                : FontStyle.normal,
-                            fontWeight: fontStyleState.fontStyle == 'bold'
-                                ? FontWeight.bold
-                                : FontWeight.w300,
-                          ),
-                          textAlign: TextAlign.center,
+                        child: Consumer<FontProvider>(
+                          builder: (context, fontState, _) {
+                            return Text(
+                              contact.displayName ?? '',
+                              style: TextStyle(
+                                fontSize:
+                                    itemWidth * 0.25 * state.layoutPercentage,
+                                fontStyle: fontStyleState.fontStyle == 'italic'
+                                    ? FontStyle.italic
+                                    : FontStyle.normal,
+                                fontWeight: fontStyleState.fontStyle == 'bold'
+                                    ? FontWeight.bold
+                                    : FontWeight.w300,
+                                fontFamily: fontState.font,
+                              ),
+                              textAlign: TextAlign.center,
+                            );
+                          },
                         ),
                       ),
                     );

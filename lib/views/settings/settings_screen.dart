@@ -17,6 +17,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   List<String> fontSizes = ['100%', '75%', '50%'];
   List<String> borders = ['no border', 'thin line', 'line', 'thick line'];
   List<String> fontStyles = ['regular', 'italic', 'bold'];
+  List<String> fonts = ['Calibri', 'Montserrat', 'Poppins'];
   double? selectedFontSize;
   double? font32;
   double? font28;
@@ -27,12 +28,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   int? selectedBorderLine;
 
   String? fontStyle;
+  String? font;
   getFontSizeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       size = prefs.getDouble('layoutPercentage');
       borderLine = prefs.getInt('border');
       fontStyle = prefs.getString('style');
+      font = prefs.getString('font');
       font28 = 28 * size!;
       font32 = 32 * size!;
       font20 = 22 * size!;
@@ -51,156 +54,174 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ? const Center(
             child: CircularProgressIndicator(),
           )
-        : Consumer<FontStyleProvider>(
-            builder: (context, fontStyleState, _) {
-              return Scaffold(
-                appBar: AppBar(
-                  title: Text(
-                    'Einstellungen',
-                    style: TextStyle(
-                      fontStyle: fontStyleState.fontStyle == 'italic'
-                          ? FontStyle.italic
-                          : FontStyle.normal,
-                      fontWeight: fontStyleState.fontStyle == 'bold'
-                          ? FontWeight.bold
-                          : FontWeight.w300,
+        : Consumer<FontProvider>(
+            builder: (context, fontState, _) {
+              return Consumer<FontStyleProvider>(
+                builder: (context, fontStyleState, _) {
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: Text(
+                        'Einstellungen',
+                        style: TextStyle(
+                          fontStyle: fontStyleState.fontStyle == 'italic'
+                              ? FontStyle.italic
+                              : FontStyle.normal,
+                          fontWeight: fontStyleState.fontStyle == 'bold'
+                              ? FontWeight.bold
+                              : FontWeight.w300,
+                          fontFamily: fontState.font,
+                        ),
+                      ),
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
                     ),
-                  ),
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                ),
-                body: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const ThemeSwitcher(),
-                        const SizedBox(height: 10),
-                        Consumer<LayoutPercentageProvider>(
-                          builder: (context, state, _) {
-                            return DropdownButtonExample(
-                              label: 'Font Size',
-                              list: fontSizes,
-                              initial: size == 1.0
-                                  ? '100%'
-                                  : size == 0.75
-                                      ? '75%'
-                                      : '50%',
+                    body: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const ThemeSwitcher(),
+                            const SizedBox(height: 10),
+                            DropdownButtonExample(
+                              label: 'Font',
+                              list: fonts,
+                              initial: fontState.font,
                               onSelected: (value) async {
                                 setState(() {
-                                  selectedFontSize = value == '100%'
-                                      ? 1.0
-                                      : value == '75%'
-                                          ? 0.75
-                                          : 0.6;
-                                  font20 = 22 * selectedFontSize!;
-                                  font28 = 28 * selectedFontSize!;
-                                  font32 = 32 * selectedFontSize!;
-                                  state.setLayoutPercentage(selectedFontSize!);
+                                  font = value;
+                                  fontState.setFont(font!);
                                 });
                               },
-                            );
-                          },
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Consumer<BorderLineProvider>(
-                          builder: (context, borderState, _) {
-                            return DropdownButtonExample(
-                              list: borders,
-                              label: 'Border',
-                              initial: borderLine == 0
-                                  ? 'no border'
-                                  : borderLine == 1
-                                      ? 'thin line'
-                                      : borderLine == 2
-                                          ? 'line'
-                                          : 'thick line',
-                              onSelected: (value) async {
-                                setState(() {
-                                  selectedBorderLine = value == 'no border'
-                                      ? 0
-                                      : value == 'thin line'
-                                          ? 1
-                                          : value == 'line'
-                                              ? 2
-                                              : 3;
-                                  borderState
-                                      .setBorderLine(selectedBorderLine!);
-                                });
+                            ),
+                            const SizedBox(height: 10),
+                            Consumer<LayoutPercentageProvider>(
+                              builder: (context, state, _) {
+                                return DropdownButtonExample(
+                                  label: 'Font Size',
+                                  list: fontSizes,
+                                  initial: size == 1.0
+                                      ? '100%'
+                                      : size == 0.75
+                                          ? '75%'
+                                          : '50%',
+                                  onSelected: (value) async {
+                                    setState(() {
+                                      selectedFontSize = value == '100%'
+                                          ? 1.0
+                                          : value == '75%'
+                                              ? 0.75
+                                              : 0.6;
+                                      font20 = 22 * selectedFontSize!;
+                                      font28 = 28 * selectedFontSize!;
+                                      font32 = 32 * selectedFontSize!;
+                                      state.setLayoutPercentage(
+                                          selectedFontSize!);
+                                    });
+                                  },
+                                );
                               },
-                            );
-                          },
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        DropdownButtonExample(
-                          list: fontStyles,
-                          label: 'Font Style',
-                          initial: fontStyle == 'regular'
-                              ? 'regular'
-                              : fontStyle == 'italic'
-                                  ? 'italic'
-                                  : 'bold',
-                          onSelected: (value) async {
-                            setState(() {
-                              fontStyle = value == 'regular'
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Consumer<BorderLineProvider>(
+                              builder: (context, borderState, _) {
+                                return DropdownButtonExample(
+                                  list: borders,
+                                  label: 'Border',
+                                  initial: borderLine == 0
+                                      ? 'no border'
+                                      : borderLine == 1
+                                          ? 'thin line'
+                                          : borderLine == 2
+                                              ? 'line'
+                                              : 'thick line',
+                                  onSelected: (value) async {
+                                    setState(() {
+                                      selectedBorderLine = value == 'no border'
+                                          ? 0
+                                          : value == 'thin line'
+                                              ? 1
+                                              : value == 'line'
+                                                  ? 2
+                                                  : 3;
+                                      borderState
+                                          .setBorderLine(selectedBorderLine!);
+                                    });
+                                  },
+                                );
+                              },
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            DropdownButtonExample(
+                              list: fontStyles,
+                              label: 'Font Style',
+                              initial: fontStyle == 'regular'
                                   ? 'regular'
-                                  : value == 'italic'
+                                  : fontStyle == 'italic'
                                       ? 'italic'
-                                      : 'bold';
-                              fontStyleState.setFontStyle(fontStyle!);
-                            });
-                          },
+                                      : 'bold',
+                              onSelected: (value) async {
+                                setState(() {
+                                  fontStyle = value == 'regular'
+                                      ? 'regular'
+                                      : value == 'italic'
+                                          ? 'italic'
+                                          : 'bold';
+                                  fontStyleState.setFontStyle(fontStyle!);
+                                });
+                              },
+                            ),
+                          ],
                         ),
-                      ],
+                        // Align(
+                        //   alignment: Alignment.topLeft,
+                        //   child: Text(
+                        //     'Abonnementpläne',
+                        //     style: TextStyle(
+                        //       fontWeight: FontWeight.w500,
+                        //       fontSize: (font32),
+                        //     ),
+                        //   ),
+                        // ),
+                        // const SizedBox(
+                        //   height: 20,
+                        // ),
+                        // SizedBox(
+                        //   width: MediaQuery.of(context).size.width * 0.9,
+                        //   child: Column(
+                        //     children: [
+                        //       subscriptionCard(
+                        //         'Standard',
+                        //         'Frei',
+                        //         'Anzeigen aktiviert\nStandardmäßig abonniert',
+                        //       ),
+                        //       const SizedBox(
+                        //         height: 20,
+                        //       ),
+                        //       subscriptionCard(
+                        //         'Monatlicher Plan',
+                        //         '€10',
+                        //         'Keine Werbung\nBessere Erfahrung',
+                        //       ),
+                        //       const SizedBox(
+                        //         height: 20,
+                        //       ),
+                        //       subscriptionCard(
+                        //         'Jahresplan',
+                        //         '€50',
+                        //         'Keine Werbung\nBessere Erfahrung',
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+                      ),
                     ),
-                    // Align(
-                    //   alignment: Alignment.topLeft,
-                    //   child: Text(
-                    //     'Abonnementpläne',
-                    //     style: TextStyle(
-                    //       fontWeight: FontWeight.w500,
-                    //       fontSize: (font32),
-                    //     ),
-                    //   ),
-                    // ),
-                    // const SizedBox(
-                    //   height: 20,
-                    // ),
-                    // SizedBox(
-                    //   width: MediaQuery.of(context).size.width * 0.9,
-                    //   child: Column(
-                    //     children: [
-                    //       subscriptionCard(
-                    //         'Standard',
-                    //         'Frei',
-                    //         'Anzeigen aktiviert\nStandardmäßig abonniert',
-                    //       ),
-                    //       const SizedBox(
-                    //         height: 20,
-                    //       ),
-                    //       subscriptionCard(
-                    //         'Monatlicher Plan',
-                    //         '€10',
-                    //         'Keine Werbung\nBessere Erfahrung',
-                    //       ),
-                    //       const SizedBox(
-                    //         height: 20,
-                    //       ),
-                    //       subscriptionCard(
-                    //         'Jahresplan',
-                    //         '€50',
-                    //         'Keine Werbung\nBessere Erfahrung',
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                  ),
-                ),
+                  );
+                },
               );
             },
           );

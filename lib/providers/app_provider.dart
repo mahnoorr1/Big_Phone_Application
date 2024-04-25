@@ -87,3 +87,32 @@ class BorderLineProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+class FontProvider extends ChangeNotifier {
+  late String _style;
+  final _prefsKey = 'font';
+
+  String get font => _style;
+
+  FontProvider() {
+    _style = 'Calibri';
+    _loadFont();
+  }
+
+  Future<void> _loadFont() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _style = prefs.getString(_prefsKey) ?? 'Calibri';
+    notifyListeners();
+  }
+
+  Future<void> _saveFont() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_prefsKey, _style);
+  }
+
+  void setFont(String style) {
+    _style = style;
+    _saveFont();
+    notifyListeners();
+  }
+}

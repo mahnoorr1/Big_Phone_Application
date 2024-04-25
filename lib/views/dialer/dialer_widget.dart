@@ -110,26 +110,33 @@ class _DialerWidgetState extends State<DialerWidget> {
                     ),
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  child: Consumer<FontStyleProvider>(
-                    builder: (context, fontStyleState, _) {
-                      return Align(
-                        alignment: alignment,
-                        child: Center(
-                          child: Text(
-                            text,
-                            style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.width < 600
-                                  ? mobileFont
-                                  : tabletFont,
-                              fontStyle: fontStyleState.fontStyle == 'italic'
-                                  ? FontStyle.italic
-                                  : FontStyle.normal,
-                              fontWeight: fontStyleState.fontStyle == 'bold'
-                                  ? FontWeight.bold
-                                  : FontWeight.w300,
+                  child: Consumer<FontProvider>(
+                    builder: (context, fontState, _) {
+                      return Consumer<FontStyleProvider>(
+                        builder: (context, fontStyleState, _) {
+                          return Align(
+                            alignment: alignment,
+                            child: Center(
+                              child: Text(
+                                text,
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 600
+                                          ? mobileFont
+                                          : tabletFont,
+                                  fontStyle:
+                                      fontStyleState.fontStyle == 'italic'
+                                          ? FontStyle.italic
+                                          : FontStyle.normal,
+                                  fontWeight: fontStyleState.fontStyle == 'bold'
+                                      ? FontWeight.bold
+                                      : FontWeight.w300,
+                                  fontFamily: fontState.font,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       );
                     },
                   ),

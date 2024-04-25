@@ -7,6 +7,7 @@ class ThemeDataStyle {
     colorScheme: ColorScheme.light(
       background: Colors.grey.shade100,
       primary: Colors.black,
+      secondary: Colors.deepPurple,
     ),
   );
 
@@ -16,6 +17,7 @@ class ThemeDataStyle {
     colorScheme: const ColorScheme.dark(
       background: Color.fromARGB(255, 44, 44, 44),
       primary: Colors.white,
+      secondary: Color.fromARGB(255, 179, 157, 219),
     ),
   );
 }
